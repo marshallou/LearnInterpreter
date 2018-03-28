@@ -1,4 +1,4 @@
-;;; try to implement the Metacircular evaluator of lisp
+ ;;; try to implement the Metacircular evaluator of lisp
 
 ;;; the evaluator contains two core function: eval and apply
 
@@ -30,3 +30,25 @@
 	((cond? exp) (eval-cond exp env))
 	((procedure? exp) (eval-procedure exp) env)
 	(else (error "Unknown expression type" exp))))
+
+;;; eval-lambda:
+;;; evaluation of lambda creates procedure object. we work on procedure abstract which has parameter, body and environment.
+;;; TODO: define 'make-procedure'; 
+(define (eval-lambda exp env)
+  (make-procedure (lambda-parameters exp)
+		  (lambda-body exp)
+		  env))
+
+;;; eval-begin:
+;;; we assume begin is an object which contains a list of expressions. (begin-actions give us the list of expressions
+;;;"(first-exp" gets the first exp in the list and "(rest-exp" returns the rest list of exps
+;;; TODO: define 'begin-actions', 'first-exp', 'rest-exp', 'last-exp'
+(define (eval-begin exp env)
+  (eval-sequence (begin-actions exp) env))
+
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps) (eval (first-exp exps) env))
+	(else (eval (first-exp exps) env)
+	      (eval-sequence (rest-exp exps) env))))
+  
+  
