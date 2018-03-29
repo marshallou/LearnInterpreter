@@ -3,7 +3,7 @@
 ;;; the evaluator contains two core function: eval and apply
 
 
-;;; eval:
+;;; eval :
 ;;; 1.eval is used for evaluating expressions. So we need to understand what is the type of expression and then evaluate.
 
 ;;; 2.we need to create an abstract of different expression type. Meaning we create getters of different expression type
