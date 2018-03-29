@@ -1,4 +1,4 @@
-;;; try to implement the Metacircular evaluator of lisp
+;;; implement the Metacircular evaluator of lisp
 
 ;;; the evaluator contains two core function: eval and apply
 
