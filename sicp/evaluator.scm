@@ -68,8 +68,6 @@
 	    (eval-list-of-values (cdr env) env))))
 
 
- 
-
 ;;; apply
 ;;; TODO: define procedure abstract which contains procedure-parameters, procedure-environment, procedure-body
 ;;;       apply-primitive-procedure, primitive-procedure?
@@ -87,3 +85,18 @@
 	(else
 	 (error
 	  "Unknown procedure type -- APPLY" procedure))))
+
+
+;;; define and assignment
+;;; TODO: define set-variable-values!, define-variable!
+(define (eval-assignment exp env)
+  (set-variable-values! (assignment-variable exp)
+			(eval (assignment-value exp) env)
+			env)
+  'ok)
+
+(define (eval-definition exp env)
+  (define-variable! (definition-variable exp)
+    (eval (definition-value exp) env)
+    env)
+  'ok)
