@@ -72,6 +72,7 @@
 ;;; TODO: define procedure abstract which contains procedure-parameters, procedure-environment, procedure-body
 ;;;       apply-primitive-procedure, primitive-procedure?
 ;;;       extend-environment
+;;; question?: why is procedure body the sequence of expression
 (define (apply procedure arguments)
   (cond ((primitive-procedure? procedure)
 	 (apply-primitive-procedure procedure arguments))
@@ -90,7 +91,7 @@
 ;;; define and assignment
 ;;; TODO: define set-variable-values!, define-variable!
 (define (eval-assignment exp env)
-  (set-variable-values! (assignment-variable exp)
+  (set-variable-value! (assignment-variable exp)
 			(eval (assignment-value exp) env)
 			env)
   'ok)
@@ -100,3 +101,9 @@
     (eval (definition-value exp) env)
     env)
   'ok)
+
+;;;
+(define (self-evaluation? exp)
+  (cond ((number? exp) true)
+	((string? exp) true)
+	(else false)))
