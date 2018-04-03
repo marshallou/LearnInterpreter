@@ -31,6 +31,27 @@
 	((application? exp) (eval-application exp) env)
 	(else (error "Unknown expression type" exp))))
 
+;;; define and assignment
+;;; TODO: representation of environment: define set-variable-values!, define-variable!, extend-environment, make-environment(maybe)
+(define (eval-assignment exp env)
+  (set-variable-value! (assignment-variable exp)
+			(eval (assignment-value exp) env)
+			env)
+  'ok)
+
+(define (eval-definition exp env)
+  (define-variable! (definition-variable exp)
+    (eval (definition-value exp) env)
+    env)
+  'ok)
+
+;;; eva-if
+;;; TODO: representation of if: if-predicate, if-consequent, if-alternative 
+(define (eval-if exp env)
+  (if (true? (eval (if-predicate exp) env))
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))
+
 ;;; eval-lambda:
 ;;; evaluation of lambda creates procedure object. we work on procedure abstract which has parameter, body and environment.
 ;;; TODO: define "lambda" abstract which contains "lambda-parameters" and "lambda-body"
@@ -40,9 +61,15 @@
 		  (lambda-body exp)
 		  env))
 
+;;; eval-cond:
+(define (eval-cond exp env)
+  (eval-if (cond->if exp) env))
+
 ;;; eval-begin:
 ;;; we assume begin is an object which contains a list of expressions. begin-actions give us the list of expressions
-;;; TODO: define "begin" abstract which contains 'begin-actions', "begin-actions" returns a list of expression
+;;; TODO: define "begin" abstract which contains 'begin-actions', "begin-actions" returns a list of expression. 'make-begin'
+;;; Note: the difference between eval-sequence and eval-list-of-values is that eval-sequence returns the last evaluated expression,
+;;; while the eval-list-of-values returns a list of evaluated values
 (define (eval-begin exp env)
   (eval-sequence (begin-actions exp) env))
 
@@ -69,10 +96,11 @@
 
 
 ;;; apply
-;;; TODO: define procedure abstract which contains procedure-parameters, procedure-environment, procedure-body
+;;; TODO: representation of procedure: make-procedure, procedure-parameters, procedure-environment, procedure-body
 ;;;       apply-primitive-procedure, primitive-procedure?
 ;;;       extend-environment
-;;; question?: why is procedure body the sequence of expression
+;;; Thinking?: why is procedure body the sequence of expressions. If we look at the lisp procedure definition, the body of procedure
+;;; can have multiple expressions. The same for cond
 (define (apply procedure arguments)
   (cond ((primitive-procedure? procedure)
 	 (apply-primitive-procedure procedure arguments))
@@ -88,22 +116,3 @@
 	  "Unknown procedure type -- APPLY" procedure))))
 
 
-;;; define and assignment
-;;; TODO: define set-variable-values!, define-variable!
-(define (eval-assignment exp env)
-  (set-variable-value! (assignment-variable exp)
-			(eval (assignment-value exp) env)
-			env)
-  'ok)
-
-(define (eval-definition exp env)
-  (define-variable! (definition-variable exp)
-    (eval (definition-value exp) env)
-    env)
-  'ok)
-
-;;;
-(define (self-evaluation? exp)
-  (cond ((number? exp) true)
-	((string? exp) true)
-	(else false)))
