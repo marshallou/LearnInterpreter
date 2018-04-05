@@ -148,5 +148,3 @@
 
 (define (application-operands exp)
   (cdr exp))
-
-;;;TODO: representing procedure and environment

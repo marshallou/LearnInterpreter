@@ -17,7 +17,7 @@
 ;;; 2)special form: assignment, definition, if, cond, lambda, begin
 ;;; 3)combinations: application
 
-;;; questions:
+
 (define (eval exp env)
   (cond ((self-evaluation? exp) exp)
 	((variable? exp) (look-up-variable exp))
@@ -32,7 +32,8 @@
 	(else (error "Unknown expression type" exp))))
 
 ;;; define and assignment
-;;; TODO: representation of environment: define set-variable-values!, define-variable!, extend-environment, make-environment(maybe)
+;;; the difference between set-variable-value! and define-variable! is that "set" will search all the way to base environment
+;;; and signal error, while "define" adds the value into the first frame of environment
 (define (eval-assignment exp env)
   (set-variable-value! (assignment-variable exp)
 			(eval (assignment-value exp) env)
@@ -45,8 +46,7 @@
     env)
   'ok)
 
-;;; eva-if
-;;; TODO: representation of if: if-predicate, if-consequent, if-alternative 
+;;; eval-if
 (define (eval-if exp env)
   (if (true? (eval (if-predicate exp) env))
       (eval (if-consequent exp) env)
@@ -54,7 +54,6 @@
 
 ;;; eval-lambda:
 ;;; evaluation of lambda creates procedure object. we work on procedure abstract which has parameter, body and environment.
-;;; TODO: define "lambda" abstract which contains "lambda-parameters" and "lambda-body"
 ;;;       define "procedure" abstract which contains 'make-procedure'; 
 (define (eval-lambda exp env)
   (make-procedure (lambda-parameters exp)
@@ -67,7 +66,6 @@
 
 ;;; eval-begin:
 ;;; we assume begin is an object which contains a list of expressions. begin-actions give us the list of expressions
-;;; TODO: define "begin" abstract which contains 'begin-actions', "begin-actions" returns a list of expression. 'make-begin'
 ;;; Note: the difference between eval-sequence and eval-list-of-values is that eval-sequence returns the last evaluated expression,
 ;;; while the eval-list-of-values returns a list of evaluated values
 (define (eval-begin exp env)
@@ -82,7 +80,6 @@
 ;;; application means function call. It contains operator (function name) and operands (arguments)
 ;;; we would like to separate the evaluation process into two step. First evaluating operator and operands. Then evaluating
 ;;; the triggering process which will be defined by "apply"
-;;; TODO: define "application" abstract which contains "application-operator" and "application-operands"
 (define (eval-application exp env)
   (apply (eval (application-operator exp) env)
 	 (eval-list-of-values (application-operands exp) env)
@@ -96,9 +93,6 @@
 
 
 ;;; apply
-;;; TODO: representation of procedure: make-procedure, procedure-parameters, procedure-environment, procedure-body
-;;;       apply-primitive-procedure, primitive-procedure?
-;;;       extend-environment
 ;;; Thinking?: why is procedure body the sequence of expressions. If we look at the lisp procedure definition, the body of procedure
 ;;; can have multiple expressions. The same for cond
 (define (apply procedure arguments)
