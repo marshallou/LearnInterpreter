@@ -17,7 +17,7 @@
 ;;; 2)special form: assignment, definition, if, cond, lambda, begin
 ;;; 3)combinations: application
 
-;;; questions:
+
 (define (eval exp env)
   (cond ((self-evaluation? exp) exp)
 	((variable? exp) (look-up-variable exp))

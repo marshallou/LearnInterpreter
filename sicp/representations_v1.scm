@@ -1,4 +1,4 @@
-;;; implement representations of all kinds of expressions by using tagged list
+;;; representing of all kinds of expressions by using tagged list
 
 ;;;tagged list
 (define (tagged-list? exp tag)
@@ -35,6 +35,7 @@
   (caddr exp))
 
 ;;; definition:
+;;; sample:
 ;;;  (define a b)
 ;;;  (define (function_name a)
 ;;;    (body))
@@ -76,7 +77,7 @@
   (cons 'lambda (cons parameters body)))
 
 ;;; if
-;;; (if (> a 1) 2 3)
+;;; sample: (if (> a 1) 2 3)
 (define (if? exp)
   (tagged-list? exp 'if))
 
@@ -123,3 +124,29 @@
       (make-if (clause-predicate first-clause)
 	       (clause-value first-clause)
 	       alternative))))
+
+(define (sequence->exp exp)
+  (cond ((null? exp) exp)
+	((null? (cdr exp)) (car exp))
+	(else (cons 'begin exp))))
+
+;;; begin
+(define (begin? exp)
+  (tagged-list? exp 'begin))
+
+(define (begin-actions exp)
+  (cdr exp))
+
+
+;;; application
+;;; sample: (+ a 2)
+(define (application? exp)
+  (pair exp))
+
+(define (application-operator exp)
+  (car exp))
+
+(define (application-operands exp)
+  (cdr exp))
+
+;;;TODO: representing procedure and environment
