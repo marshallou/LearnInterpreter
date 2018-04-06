@@ -1,3 +1,0 @@
-;;; This file contain data structures used by evaluator.
-;;; Two data structures are: environment and procedure
-
