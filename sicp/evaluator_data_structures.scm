@@ -21,7 +21,6 @@
 (define (procedure-environment exp)
   (cadddr exp))
 
-;;; TODO: tagged-list? has not been defined here. load representations_v1.scm
 (define (compound-procedure? exp)
   (tagged-list? exp 'procedure))
 
@@ -37,6 +36,24 @@
 
 (define (enclosing-environment env)
   (cdr env))
+
+;;; make-frame: add parameter names and values into frame
+;;;   parameters: val names
+;;;   arguments: values
+(define (make-frame parameters arguments)
+  (define (make-list-of-pairs vars vals)
+    (cond ((null? vars) '())
+	  (else (cons (cons (car vars) (car vals))
+		      (make-list-of-pairs (cdr vars) (cdr vals))))))
+  (if (not (= (length parameters) (length arguments)))
+      (error "The number of parameters does not equal to the number of arguments while making the frame")
+      (make-list-of-pairs parameters arguments)))
+
+;;; extend-environment
+;;;   description: making a new frame which binds given parameters and arguments and extend the given
+;;;        given environment
+(define (extend-environment parameters arguments env)
+  (cons (make-frame parameters arguments) env))
 
 
 ;;; lookup-pair-and-operate:
@@ -82,7 +99,6 @@
 ;;;    val: value
 ;;;    env: the environment
 (define (define-variable! var val env)
-  (define first-frame (car env))
   (define new-pair (cons var val))
   (define (scan pairs)
     (cond ((null? pairs) (add-pair new-pair env))
@@ -103,6 +119,6 @@
 ;;; test define-variable!
 ;;; env: ( ((a, 1) (b, 2)), ((c, 3), (d, 4)), ((e, 5)) )
 ;;; set c 5
-(define env (list (list (cons 'a 5) (cons 'b 2)) (list (cons 'c 3) (cons 'd 4)) (list (cons 'e 5))))
-(set-variable-value! 'c 5 env)
-env
+; (define env (list (list (cons 'a 5) (cons 'b 2)) (list (cons 'c 3) (cons 'd 4)) (list (cons 'e 5))))
+; (set-variable-value! 'c 5 env)
+; env
