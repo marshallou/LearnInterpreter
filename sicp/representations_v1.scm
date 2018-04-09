@@ -115,11 +115,11 @@
   (tagged-list? exp 'cond))
 
 
-;(define (cond-clauses exp)
-;  (cdr exp)
+(define (cond-clauses exp)
+  (cdr exp))
 
-;(define (clause-predicate clause)
-;  (car clause))
+(define (clause-predicate clause)
+  (car clause))
 
 (define (clause-value clause)
   (sequence->exp (cdr clause)))
@@ -144,7 +144,7 @@
 	(rest-clauses (cdr clauses)))
     (let ((alternative
 	   (cond ((null? rest-clauses) false)
-		 ((else-clause? (car rest-clause)) (clause-value rest-clauses))
+		 ((else-clause? (car rest-clauses)) (clause-value rest-clauses))
 		 (else (cond-if-iter rest-clauses)))))
       (make-if (clause-predicate first-clause)
 	       (clause-value first-clause)
