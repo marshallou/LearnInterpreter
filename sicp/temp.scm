@@ -1,4 +1,3 @@
-
 ;;; cond
 (define (cond? exp)
   (tagged-list? exp 'cond))
@@ -34,23 +33,9 @@
 	((null? (cdr exp)) (car exp))
 	(else (cons 'begin exp))))
 
-;;; begin
-(define (begin? exp)
-  (tagged-list? exp 'begin))
-
-(define (begin-actions exp)
-  (cdr exp))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; evaluator
-;;; eval-cond:
-(define (eval-cond exp env)
-  (eval-if (cond->if exp) env))
 
-;;; eval-begin:
-;;; we assume begin is an object which contains a list of expressions. begin-actions give us the list of expressions
-(define (eval-begin exp env)
-  (eval-sequence (begin-actions exp) env))
 
 
 

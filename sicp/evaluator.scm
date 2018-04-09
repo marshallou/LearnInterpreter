@@ -80,7 +80,6 @@
 		  env))
 
 ;;; temporary workaround for testing
-(define (begin? exp) false)
 (define (cond? exp) false)
 
 ;;; eval-if
@@ -88,3 +87,12 @@
   (if (eval (if-predicate exp) env)
       (eval (if-consequent exp) env)
       (eval (if-alternative exp) env)))
+
+;;; eval-cond:
+(define (eval-cond exp env)
+  (eval-if (cond->if exp) env))
+
+;;; eval-begin:
+;;; we assume begin is an object which contains a list of expressions. begin-actions give us the list of expressions
+(define (eval-begin exp env)
+  (eval-sequence (begin-actions exp) env))

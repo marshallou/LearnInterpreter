@@ -101,3 +101,10 @@
 
 (define (make-if predicate consequent alternative)
   (list 'if predicate consequent alternative))
+
+;;; begin
+(define (begin? exp)
+  (tagged-list? exp 'begin))
+
+(define (begin-actions exp)
+  (cdr exp))

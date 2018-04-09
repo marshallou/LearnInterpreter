@@ -9,7 +9,7 @@
 		  (list (cons 'e 5))
 		  (car base-env)))
 
-(define exp-define '(define (run m) (if (> m 3) (+ m 10) (+ m 1))))
+(define exp-define '(define (run m) (begin (+ m 1) (+ m 2))))
 
 (define exp-run '(run d))
 
