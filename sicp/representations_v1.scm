@@ -139,12 +139,15 @@
 (define (cond->if exp)
   (cond-if-iter (cond-clauses exp)))
 
+;;; cond-if-iter: iteratively convert cond to if
+;;; invariant: first-clause can not be nil.
+;;;   if rest-clauses is nil, we stop iteration which keeps invariant
 (define (cond-if-iter clauses)
   (let ((first-clause (car clauses))
 	(rest-clauses (cdr clauses)))
     (let ((alternative
 	   (cond ((null? rest-clauses) false)
-		 ((else-clause? (car rest-clauses)) (clause-value rest-clauses))
+		 ((else-clause? (car rest-clauses)) (clause-value (car rest-clauses)))
 		 (else (cond-if-iter rest-clauses)))))
       (make-if (clause-predicate first-clause)
 	       (clause-value first-clause)
