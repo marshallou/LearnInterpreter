@@ -12,8 +12,47 @@
 	((if? exp) (eval-if exp env))
 	((begin? exp) (eval-begin exp env))
 	((cond? exp) (eval-cond exp env))
-	((application? exp) (eval-application exp) env)
+	((application? exp) (eval-application exp env))
 	(else (error "Unknown expression type" exp))))
+
+
+;;; eval-application:
+;;;    eval expression of triggering procedure by applying evaluated arguments
+;;;    to the evaluated operator.
+(define (eval-application exp env)
+  (evaluator-apply (eval (application-operator exp) env)
+	 (eval-list-of-values (application-operands exp) env)))
+
+(define (eval-list-of-values  exps env)
+  (if (null? exps)
+      '()
+      (cons (eval (car exps) env)
+	    (eval-list-of-values (cdr exps) env))))
+
+;;; apply:
+;;;    If the procedure is primitive procedure, load underlying scheme procedure from base environment to execute.
+;;;    If the procedure is compound procedure, extract its body to further evaluate.
+;;;    Note: procedure body is a list of expressions, rather than a single expression
+(define (evaluator-apply procedure arguments)
+  (cond ((primitive-procedure? procedure)
+	 (apply-primitive-procedure procedure arguments))
+	((compound-procedure? procedure)
+	 (eval-sequence
+	  (procedure-body procedure)
+	  (extend-environment
+	   (procedure-parameters procedure)
+	   arguments
+	   (procedure-environment procedure))))
+	(else
+	 (error
+	  "Unknown procedure type -- APPLY" procedure))))
+
+;;; eval-sequence: evaluate a list of expression and return the value of last evaluated expression
+(define (eval-sequence exps env)
+  (cond ((null? (cdr exps)) (eval (car exps) env))
+	(else (eval (car exps) env)
+	      (eval-sequence (cdr exps) env))))
+
 
 ;;; assignmeent: change the variable's value specified in assignment expression to the
 ;;;    new value. Signal error if the variable name does not exist in the envrionment
@@ -39,3 +78,13 @@
   (make-procedure (lambda-parameters exp)
 		  (lambda-body exp)
 		  env))
+
+;;; temporary workaround for testing
+(define (begin? exp) false)
+(define (cond? exp) false)
+
+;;; eval-if
+(define (eval-if exp env)
+  (if (eval (if-predicate exp) env)
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))

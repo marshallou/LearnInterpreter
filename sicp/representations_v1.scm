@@ -71,3 +71,33 @@
 
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
+
+;;; application?
+;;;    application is the expression of triggering procedure. We identify expression by exclude all those special operators like if, cond, begin
+(define (application? exp)
+  (pair? exp))
+
+(define (application-operator exp)
+  (car exp))
+
+(define (application-operands exp)
+  (cdr exp))
+
+;;; if
+;;; sample: (if (> a 1) 2 3)
+(define (if? exp)
+  (tagged-list? exp 'if))
+
+(define (if-predicate exp)
+  (cadr exp))
+
+(define (if-consequent exp)
+  (caddr exp))
+
+(define (if-alternative exp)
+  (if (null? (cadddr exp))
+      false
+      (cadddr exp)))
+
+(define (make-if predicate consequent alternative)
+  (list 'if predicate consequent alternative))

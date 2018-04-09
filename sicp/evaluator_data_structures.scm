@@ -1,3 +1,4 @@
+
 ;;; This file contain data structures used by evaluator.
 ;;; Two data structures are: environment and procedure:
 
@@ -8,7 +9,7 @@
 ;;;  abstactions: make-procedure, procedure-parameters, procedure-environment,
 ;;;    procedure-body, primitive-procedure?, apply-primitive-procedure, compound-procedure?
 
-;;; procedure
+;;; compound procedure
 (define (make-procedure parameters body env)
   (list 'procedure parameters body env))
 
@@ -24,8 +25,32 @@
 (define (compound-procedure? exp)
   (tagged-list? exp 'procedure))
 
-;;; TODO: implement apply-primitive-procedure
+;;; primitive-procedure
+(define (primitive-procedure? proc)
+  (tagged-list? proc 'primitive))
 
+(define load-base-env-with-primitive-procedure
+  (list ;environment
+   (list ;first frame
+    (cons '+ (list 'primitive +))
+    (cons '- (list 'primitive -))
+    (cons '* (list 'primitive *))
+    (cons '/ (list 'primitive /))
+    (cons 'car (list 'primitive car))
+    (cons '> (list 'primitive >))
+    (cons '< (list 'primitive <))
+    (cons '= (list 'primitive =))
+    (cons 'cdr (list 'primitive cdr)))))
+
+;;; We rely on scheme's original "apply" procedure to execute primitive procedure
+;;; Since our evaluator also defines "apply" procedure which creates confusion, we
+;;; need to load this file first to prevent "apply" being overridden, at the same
+;;; time we rename it to be scheme-primitive-apply
+(define scheme-primitive-apply apply)
+
+(define (apply-primitive-procedure proc arguments)
+  (let ((primitive-implementation (cadr proc)))
+    (scheme-primitive-apply primitive-implementation arguments)))
 
 ;;; environment
 ;;;   pair: (cons key value), key is the variable name, while value is the variable value
