@@ -79,9 +79,6 @@
 		  (lambda-body exp)
 		  env))
 
-;;; temporary workaround for testing
-(define (cond? exp) false)
-
 ;;; eval-if
 (define (eval-if exp env)
   (if (eval (if-predicate exp) env)

@@ -9,9 +9,17 @@
 		  (list (cons 'e 5))
 		  (car base-env)))
 
-(define exp-define '(define (run m) (begin (+ m 1) (+ m 2))))
+;;(define exp-define '(define (run m) (begin (+ m 1) (+ m 2))))
 
-(define exp-run '(run d))
+;;(define exp-run '(run d))
 
-(eval exp-define env)
-(eval exp-run env)
+;;(eval exp-define env)
+;;(eval exp-run env)
+
+;(define exp-define '(define (test m)
+;		      (cond ((< m 4) (+ m 20))
+;			    ((< m 6) (+ m 30))
+;			    (else (+ m 40))
+;;(define exp-run '(test 1))
+;;(eval exp-define env)
+;;(eval exp-run env)
