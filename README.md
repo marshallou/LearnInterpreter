@@ -13,6 +13,9 @@
   - For MIT Scheme, you also need to set the MITSCHEME-LIBRARY-PATH variable, so add this to your .emacs ```(setenv "MITSCHEME_LIBRARY_PATH" "/Applications/mit-scheme.app/Contents/Resources")```
 - type M-x run-scheme to start scheme interpeter
 
+#### 1.1.2 Start evaluator
+open "start.scm" file and C-c C-l to load it into scheme interpreter
+
 ### 1.2 Implement the Metacircular evaluator of scheme.
    Metacircular evaluator and parsing: normal interpreter should also contains parsing step. Parse means to translate the evaluated expression into an object which implementing language can understand. Since we are building metacircular evaluator, the evaluated expression passed into evaluator is always quoted list. Thus, the parsing step can be skipped.
 
