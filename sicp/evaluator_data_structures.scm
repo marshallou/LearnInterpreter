@@ -40,6 +40,8 @@
     (cons '> (list 'primitive >))
     (cons '< (list 'primitive <))
     (cons '= (list 'primitive =))
+    (cons 'cons (list 'primitive cons))
+    (cons 'null? (list 'primitive null?))
     (cons 'cdr (list 'primitive cdr)))))
 
 ;;; We rely on scheme's original "apply" procedure to execute primitive procedure
@@ -91,7 +93,7 @@
 ;;;    operation: the operation wants to perform on the key/value pair found
 (define (lookup-pair-and-operate variable environment operation)
   (define (look-up var frame env op)
-    (cond ((and (null? frame) (null? env)) (error "variable does not exist in environment"))
+    (cond ((and (null? frame) (null? env)) (error "variable does not exist in environment, variable:"variable))
 	  ((null? frame) (look-up var (car env) (cdr env) op))
 	  ((not (eq? (car (car frame)) var)) (look-up var (cdr frame) env op))
 	  (else (op (car frame)))))

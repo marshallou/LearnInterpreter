@@ -16,13 +16,18 @@
 ;;(eval exp-define env)
 ;;(eval exp-run env)
 
-(define exp-define '(define (test m)
-		      (cond ((< m 4) (+ m 20))
-			    ((< m 6) (+ m 30))
-			    (else (+ m 40)))))
+;;; (define exp-define '(define (test m)
+;;;		      (cond ((< m 4) (+ m 20))
+;;;			    ((< m 6) (+ m 30))
+;;;			    (else (+ m 40)))))
 
-(define exp-test '(test e))
+;;; (define exp-test '(test e))
 
+(define exp-define '(define (append x y)
+		      (if (null? x) y
+			  (cons (car x) (append (cdr x) y)))))
 	
 (eval exp-define env)
+
+(define exp-test '(append '(a b c) '(c d e)))
 (eval exp-test env)
