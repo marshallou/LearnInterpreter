@@ -80,5 +80,4 @@ For other expression like if, variable, quote, analyze evaluator gain little eff
 
 ### 2.2 amb evaluator
 
-amb evaluator is an evaluator which supports "amb" special form expression
-
+amb evaluator is an evaluator which supports "amb" special form expression.
