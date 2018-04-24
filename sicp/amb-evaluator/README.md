@@ -8,7 +8,7 @@
 
   But how to achieve that and where to fetch the choice and when to resume execution are things still confuse me.
 
-## Invariant
+## Success Invariant
 
   Thinkingn further. The key point is "invariant". In order to understand "success" and "fail", we need to understand the "invariant" that the "success" and "fail" wants to keep.
 
@@ -47,3 +47,12 @@
 
   But currently, I still do not know the invariant for 'fail'. I can imagine fail will undo the side effect. But how does it automatically make an alternative choice and resume execution is still confusing me.
 
+
+## Fail Invariant
+  If we take a look at 'success' procedure that "if" passes to "if-predicate", it takes "fail2" as an argument.
+
+  Personally, I feel the mechanism is quite similar to observer design pattern in a functional programming way. The 'success' procedure passed to "if-prediate" by "if" serves as function reference to "register". If "if-predicate" evaluates successfully, it triggers 'success' to register "fail2". Then fail2 will be called if subsequent evaluation fails to undo the side effect.
+
+  Comparing to 'success' invariant which is a promise parent gives to children, the 'fail' invariant is in reverse direction, a promise child gives to parent. Namely, we can describe fail invariant like this:
+
+  If the child expression evaluates successfully, it will call 'success' by passing a 'fail' procedure as an argument. When triggering the 'fail' procedure passed in, it will undo the side effect make by evaluating child expression.

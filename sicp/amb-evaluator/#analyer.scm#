@@ -1,0 +1,6 @@
+;;; analyze
+(define (analyze exp)
+  (cond ((self-evaluation exp) (analyze-self exp))
+	(else exp)))
+
+
