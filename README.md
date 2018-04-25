@@ -66,18 +66,18 @@ The first step of implementing amb evaluator is to transform original evaluator 
 
 #### 2.1.1 intro of analyzed evaluator
 
-The process of evaluation is to understand the expression type and dispatch based on the type for proper evaluation. "understand the expression type" is actually an analyze process. Although for meta-circular evaluator, there is no need for syntax analyze, as all the expression is represented as tagged list, it is still considered as a step of analyze.
-
-So the idea of analyzed evaluator is to analyze ("understand") those tagged list before execution. We transform those tagged list to executable procedures which can improve the performance.
+The basic evaluator takes tagged list as input and dispatch based on analyzing tagged list type. The idea of analyzed evaluator is to analyze those tagged list before execution. We transform those tagged list to executable procedures.
 
 #### 2.1.2 implementation
-The analyzed evaluator has two steps in evaluating process. First, it takes an expression and analyze it to produce a procedure. Second, it takes the procedure generated in first step and invoke it by passing the environment as its argument.
+The analyzed evaluator has two steps in evaluating process. First, it takes an expression and analyze it to produce a lambda. Second, it invokes the lambda function by passing the environment as its argument.
 
 #### 2.1.3 performance gain of analyzed evaluator
-The analyze step itself is recursive. There is nothing special when analyze basic expression like if, variable, quote, definition, asignment, application. Personally, I feel the main difference is analyze lambda. Comparing to eval lambda which produce a procedure, analyze lambda will recursively analyze the lambda body. This means when we are in execution phase, the body has already been analyzed.
+The analyze step itself is recursive. Personally, There is not much information gain for basic expressions like if, variable, quote, definition, asignment, application. Because both basic evaluator and analyzed evaluator will have those analyze steps. It is just that analyzed evaluator does it in analyzing phase. What really makes difference is analyzing lambda expression. Because analyzing lambda will recursively analyze the lambda body which is something we won't do for basic evaluator. 
 
-For other expression like if, variable, quote, analyze evaluator gain little efficiency as analyze step will anyway happen in both version of evaluators. But analyzing lambda really makes a difference, since after defining a procedure, it can be invoked multiple times, expecially for recursive procedures. Once we analyze the body, there is no need for analyze a second time which improves a lot of efficiency.
+This means if we invoke the lambda many times, we can reuse the analyzed body for many times which improves the efficiency.
 
 ### 2.2 amb evaluator
 
 amb evaluator is an evaluator which supports "amb" special form expression.
+
+Details can be found: [amb-evaluator](https://github.com/marshallou/learn-interpreter/blob/master/sicp/amb-evaluator/README.md)
