@@ -1,6 +1,6 @@
 (load "representations_v1.scm")
 (load "evaluator_data_structures.scm")
-(load "evaluator.scm")
+(load "analyzer.scm")
 
 (define base-env load-base-env-with-primitive-procedure)
 

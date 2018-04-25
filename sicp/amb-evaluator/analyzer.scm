@@ -6,6 +6,8 @@
 	((assignment? exp) (analyze-assignment exp))
 	((definition? exp) (analyze-definition exp))
 	((lambda? exp) (analyze-lambda exp))
+	((if? exp) (analyze-if exp))
+	((cond? exp) (analyze-cond exp))
 	((application? exp) (analyze-application exp))
 	(else exp)))
 
@@ -19,10 +21,12 @@
   (lambda (env)
     (lookup-variable exp env)))
 
+
 ;;; analyze-quote
 (define (analyze-quote exp)
   (lambda (env)
     (quote-content exp)))
+
 
 ;;; analyze-assignment
 (define (analyze-assignment exp)
@@ -31,6 +35,7 @@
     (lambda (env)
       (set-variable-value! var (vproc env) env))))
 
+
 ;;; analyze-definition
 (define (analyze-definition exp)
     (let ((var (definition-variable exp))
@@ -38,12 +43,14 @@
       (lambda (env)
 	(define-variable! var (vproc env) env))))
 
+
 ;;; analyze-lambda
 (define (analyze-lambda exp)
   (let ((params (lambda-parameters exp))
 	(bproc (analyze-sequence (lambda-body exp))))
     (lambda (env)
       (make-procedure params bproc env))))
+
 
 ;;; analyze-sequence
 (define (analyze-sequence exps)
@@ -55,6 +62,7 @@
   (let ((bprocs (map analyze exps)))
     (lambda (env)
       (execute-procs bprocs env))))
+
 
 ;;; analyze-application
 (define (analyze-application exp)
@@ -81,3 +89,24 @@
 	 (error
 	  "Unknown procedure type -- when executing 'execute-application'"
 	  proc))))
+
+
+;;; analyze-if
+(define (analyze-if exp)
+  (let ((pproc (analyze (if-predicate exp)))
+	(cproc (analyze (if-consequent exp)))
+	(aproc (analyze (if-alternative exp))))
+    (lambda (env)
+      (if (pproc env)
+	  (cproc env)
+	  (aproc env)))))
+
+
+;;; analyze-cond
+(define (analyze-cond exp)
+  (analyze-if (cond->if exp)))
+
+
+;;; eval
+(define (eval exp env)
+  ((analyze exp) env))

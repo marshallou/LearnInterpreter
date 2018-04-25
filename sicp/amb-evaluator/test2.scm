@@ -9,5 +9,9 @@
 		  (list (cons 'e 5))
 		  (car base-env)))
 
-(define exp (list '+ 'e 3))
+(define exp '(define (add x) (if (> x 10) (+ x 10) (+ x 20))))
 ((analyze exp) env)
+
+(define exp2 '(add a))
+((analyze exp2) env)
+
