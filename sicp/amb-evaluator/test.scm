@@ -1,6 +1,6 @@
 (load "representations_v1.scm")
 (load "evaluator_data_structures.scm")
-(load "evaluator.scm")
+(load "analyzer.scm")
 
 (define base-env load-base-env-with-primitive-procedure)
 
@@ -9,25 +9,9 @@
 		  (list (cons 'e 5))
 		  (car base-env)))
 
-;;(define exp-define '(define (run m) (begin (+ m 1) (+ m 2))))
+(define exp '(define (add x) (if (> x 10) (+ x 10) (+ x 20))))
+((analyze exp) env)
 
-;;(define exp-run '(run d))
+(define exp2 '(add a))
+((analyze exp2) env)
 
-;;(eval exp-define env)
-;;(eval exp-run env)
-
-;;; (define exp-define '(define (test m)
-;;;		      (cond ((< m 4) (+ m 20))
-;;;			    ((< m 6) (+ m 30))
-;;;			    (else (+ m 40)))))
-
-;;; (define exp-test '(test e))
-
-(define exp-define '(define (append x y)
-		      (if (null? x) y
-			  (cons (car x) (append (cdr x) y)))))
-	
-(eval exp-define env)
-
-(define exp-test '(append '(a b c) '(c d e)))
-(eval exp-test env)
