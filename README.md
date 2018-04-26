@@ -2,7 +2,7 @@
 
 ## 1.SICP's Basic version of Metacircular evaluator of scheme
 
-The basic version of evaluator is under /evaluator
+The basic version of evaluator is under [/evaluator](https://github.com/marshallou/learn-interpreter/tree/master/sicp/evaluator)
 
 ### 1.1 Environment setup
 

@@ -14,13 +14,6 @@
 
   At first, I have no clue about what "invariant" they want to keep, until I saw the code which anlyze "if".
   
-  For expressions like self-evaluating, quote, variable and lambda, are predestined to be sucess. They serve as base case of this recursive evaluating process. Since those are expressions that when evaluating, are predestined to be success, we know the process is shown below:
-- evaluate the expression
-- get the evaluated value
-- call sucess with the value
-
-  Now we can take a look at the process of analysing if.
-
 ```
 (define (analyze-if exp)
     (let ((pproc (analyze (if-predicate exp)))
@@ -39,20 +32,17 @@
 	       ;; failure continuation for evaluating the predicate
  	       fail))))
 ```
-  Analyzing "if" can be decomposed into three parts. Analyze if-predicate, analyze if-consequent and analyze if-alternative. Now if we look at the relationship between analyze "if" and analyze if-predicate, we can understand the invariant.
+  Analyzing "if" can be decomposed into three parts. Analyze if-predicate, analyze if-consequent and analyze if-alternative. If we look at the relationship between analyze "if" and analyze if-predicate to understand the invariant.
 
-  Personally, I feel the mechanism is quite similar to delegate design pattern in a function programming way. Here is the story. "If" expression's job is to dispatch based on the value of if-prediate expression, but it does not know the value of if-prediate while analyzing. So "if" told "if-prediate": "I will give you a function called 'success', after you evaluate the value, you pass the value to this 'success' function. The 'success' function will do dispatch for you'.
+  Personally, I feel the mechanism is quite similar to delegate design pattern in a function programming way. Here is the story. "If" expression's job is to dispatch the control flow to different branch based on the value of if-prediate expression, but it does not know the value of if-prediate while analyzing. So "if" told "if-prediate": "I will give you a function called 'success', after you evaluate the value, you pass the value to this 'success' function. The 'success' function will do rest of the work'. In CPS(Continuous Passing Style), the if-predicate is called hole of evaluating expression.
 
-  From here we know the invariant for 'success' is: "in recursive evaluating process, the parent expression should pass a 'sccess' function to unevaluated child expression, where child expression call it with evaluated value, it will generate the evaluated result of parent expression.
+  From here we know the invariant for 'success' is: "When evaluating an expression, if part of sub expression are not able to be analyzed at this time, calling success later with evaluated sub expression value will produce the value of whole expression."
 
-  But currently, I still do not know the invariant for 'fail'. I can imagine fail will undo the side effect. But how does it automatically make an alternative choice and resume execution is still confusing me.
+  But currently, I still do not know the invariant for 'fail'. I can imagine fail will undo the side effect. But how it automatically makes an alternative choice and resumes the execution is still confusing me.
 
 
 ## Fail Invariant
-  If we take a look at 'success' procedure that "if" passes to "if-predicate", it takes "fail2" as an argument.
+  I am still not able to figure out the invariant of 'fail'. I can only describe what I found so far. 
+  Since we know the concept of 'hole' in CPS, the 'hole' can be chained. 'fail' is defined along the chaining process while analyzing subexpression. When triggered, it will evaluate all previous chained subexpressions with alternative choice.
 
-  Personally, I feel the mechanism is quite similar to observer design pattern in a functional programming way. The 'success' procedure passed to "if-prediate" by "if" serves as function reference to "register". If "if-predicate" evaluates successfully, it triggers 'success' to register "fail2". Then fail2 will be called if subsequent evaluation fails to undo the side effect.
-
-  Comparing to 'success' invariant which is a promise parent gives to children, the 'fail' invariant is in reverse direction, a promise child gives to parent. Namely, we can describe fail invariant like this:
-
-  If the child expression evaluates successfully, it will call 'success' by passing a 'fail' procedure as an argument. When triggering the 'fail' procedure passed in, it will undo the side effect make by evaluating child expression.
+  Thus 'fail' is defined by chained subexpression, fail is called in 'amb' (for most cases, in require)

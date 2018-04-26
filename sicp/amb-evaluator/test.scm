@@ -9,9 +9,22 @@
 		  (list (cons 'e 5))
 		  (car base-env)))
 
-(define exp '(define (add x) (if (> x 10) (+ x 10) (+ x 20))))
-((analyze exp) env)
+(define (success val fail)
+  val)
 
-(define exp2 '(add a))
-((analyze exp2) env)
+(define (fail)
+  (display "failed!!!"))
+
+(define exp '(define (changeb x) (if (> x 5) (set! b x) (set! b 1))))
+
+(ambeval exp env success fail)
+
+(define exp3 '(changeb 10))
+
+(ambeval exp3 env success fail)
+
+(define exp2 'b)
+
+(ambeval exp2 env success fail)
+
 
