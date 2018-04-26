@@ -4,38 +4,50 @@
 
 (define base-env load-base-env-with-primitive-procedure)
 
-;;; io-message: print instruction message for user, like
-;;;    prompt input, output
-(define (instruction-message str)
-  (newline)
-  (newline)
-  (display str)
-  (newline))
+(define input-prompt ";;; Amb-Eval input:")
 
-(define (input-prompt)
-  (instruction-message ";;; Eval input: "))
+(define output-prompt ";;; Amb-Eval value:")
 
-(define (output-message)
-  (instruction-message ";;; Eval output: "))
+(define (prompt-for-input string)
+  (newline) (newline) (display string) (newline))
 
-;;; driver-loop: start evaluator
+(define (announce-output string)
+  (newline) (display string) (newline))
+
+(define (user-print object)
+  (if (compound-procedure? object)
+     (display (list 'compound-procedure
+		 (procedure-parameters object)
+		 (procedure-body object)
+		 '<procedure-env>))
+     (display object)))
+
 (define (driver-loop)
-  (input-prompt)
-  (let ((input (read)))
-    (let ((output (eval input base-env)))
-      (output-message)
-      (output-content output)))
-  (driver-loop))
+  (define (internal-loop try-again)
+    (prompt-for-input input-prompt)
+    (let ((input (read)))
+      (if (eq? input 'try-again)
+	  (try-again)
+	  (begin
+	    (newline)
+	    (display ";;; Starting a new problem ")
+	    (ambeval input
+		     base-env
+		     ;; ambeval success
+		     (lambda (val next-alternative)
+		       (announce-output output-prompt)
+		       (user-print val)
+		       (internal-loop next-alternative))
+		     ;; ambeval failure
+		     (lambda ()
+		       (announce-output
+			";;; There are no more values of")
+		       (user-print input)
+		       (driver-loop)))))))
+  (internal-loop
+   (lambda ()
+     (newline)
+     (display ";;; There is no current problem")
+     (driver-loop))))
 
-;;; output-content:
-;;;    for procedures, it contains its environment which may be a very long list or contain cycles. output-content prints only parameters and body.
-(define (output-content output)
-  (if (compound-procedure? output)
-      (display (list 'compound-procedure
-		     (procedure-parameters output)
-		     (procedure-body output)
-		     '<procedure-env>))
-      (display output)))
-
-;;; start
 (driver-loop)

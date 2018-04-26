@@ -15,6 +15,7 @@
 	((definition? exp) (analyze-definition exp))
 	((lambda? exp) (analyze-lambda exp))
 	((if? exp) (analyze-if exp))
+	((amb? exp) (analyze-amb exp))
 	((application? exp) (analyze-application exp))
 	(else error "Non-supported exp to analyze")))
 
@@ -173,7 +174,15 @@
 		   (aproc env succeed fail2)))
 	     fail))))
 
-
-;;; analyze-cond
-;(define (analyze-cond exp)
-;  (analyze-if (cond->if exp)))
+;;; analyze-amb
+(define (analyze-amb exp)
+  (let ((cprocs (map analyze (amb-choices exp))))
+    (lambda (env succeed fail)
+      (define (try-next choices)
+	(if (null? choices)
+	    (fail)
+	    ((car choices) env
+	     succeed
+	     (lambda ()
+	       (try-next (cdr choices))))))
+      (try-next cprocs))))

@@ -151,3 +151,8 @@
       (make-if (clause-predicate first-clause)
 	       (clause-value first-clause)
 	       alternative))))
+
+;;; amb
+(define (amb? exp) (tagged-list? exp 'amb))
+
+(define (amb-choices exp) (cdr exp))

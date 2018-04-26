@@ -42,6 +42,8 @@
     (cons '= (list 'primitive =))
     (cons 'cons (list 'primitive cons))
     (cons 'null? (list 'primitive null?))
+    (cons 'not (list 'primitive not))
+    (cons 'member (list 'primitive member))
     (cons 'cdr (list 'primitive cdr)))))
 
 ;;; We rely on scheme's original "apply" procedure to execute primitive procedure
