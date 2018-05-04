@@ -81,3 +81,25 @@ This means if we invoke the lambda many times, we can reuse the analyzed body fo
 amb evaluator is an evaluator which supports "amb" special form expression.
 
 Details can be found: [amb-evaluator](https://github.com/marshallou/learn-interpreter/blob/master/sicp/amb-evaluator/README.md)
+
+## 3.SICP's logical programming
+
+logical programming is programming style which is different from now programming style. Normal programming gives step by step procedure to interpretor/compiler and interpretor will execute those instructions to compute result. But logical programming does not care "how" the result is computed. It just describes what it compute.
+
+### 3.1 how it works
+logical programming will give a list of rules to interpretor to initialize the system. Having the rules, interpretor is able to apply mathematical deduction to compute the result. We call the question/problem the logical programming trys to solve "query".
+
+Since it is interpretor, we know that the process of solving the problem consiting of two parts: eval and apply.
+
+### 3.2 eval and apply
+There are two kinds of rules stored in interpretor:
+
+- The basic rule which we call it assertion and it is the end of recursive induction. Similar to the concept of primitive types of a language.
+- The compound rule which is defined by other rules. Similar to the concept of procedure of a language.
+
+When given a "query" (expression), the interpretor will first eval the "query". This is done by a process called "pattern match" or "unification". It go through all the rules stored in interpretor and check whether the query "pattern matches" the rule. If it matches the basic rule, we return the matched pattern variable in a data structure called frame. The problem solved.
+
+If it "pattern matches" a compound rule, there will be an "apply" process. We unify the pattern variable in "query" and "rule conclusion" and treat the body of the rule as a new query. We recursively eval the new query until we the query reduced to a basic rule.
+
+### 3.3 details
+Details can be found: [amb-evaluator](https://github.com/marshallou/learn-interpreter/blob/master/sicp/logical-evaluator/README.md)
